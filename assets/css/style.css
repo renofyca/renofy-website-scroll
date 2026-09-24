@@ -239,6 +239,8 @@ section{scroll-margin-top:calc(var(--header-h) + 12px)}
 .card .body{padding:1.5rem}
 .card .body h3{font-family:var(--font-display);font-size:1.45rem;font-weight:600;margin-bottom:.5rem}
 .card .body p{color:var(--muted);font-size:.93rem;margin-bottom:1rem}
+.svc-lede{font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:#fff!important;margin-bottom:.4rem!important}
+.svc-meta{display:flex;gap:1.1rem;margin:-.3rem 0 1rem;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:600}
 .card .more{font-size:.82rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-family:var(--font-body)}
 .card.flash{animation:cardFlash 1.6s ease}
 @keyframes cardFlash{0%,100%{box-shadow:0 24px 60px rgba(0,0,0,.5)}30%{box-shadow:0 0 0 3px var(--teal),0 0 44px var(--teal)}}
