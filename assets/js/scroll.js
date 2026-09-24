@@ -12,9 +12,9 @@
    SINGLE-ANCHOR METHOD: one master image per zone; every construction
    stage and walkthrough room derived from its anchor so all 17 clips show
    unmistakably the SAME house (see assets/scroll/SOURCES.md).
-   MINIMAL UI: no stage names, no numbers, no cards, no descriptions, no
-   text over the film — only one thin teal→copper progress bar, continuous
-   across both chapters.
+   MINIMAL UI: stage names only (no numbers, no counters), no cards, no
+   descriptions, no text over the film beyond the name — plus one thin
+   teal→copper progress bar, continuous across both chapters.
    FULL SCREEN: pinned video is 100vw x 100dvh, object-fit:cover —
    edge-to-edge on desktop and phone, zero black bars. The transparent
    fixed site header renders over the film; nothing shrinks the video area.
@@ -35,26 +35,25 @@
   function smooth(t) { t = clamp01(t); return t * t * (3 - 2 * t); }
 
   /* ================= 1. SCROLL-DRIVEN FILM (two chapters) ================= */
-  // 17 clips — file names only. Nothing user-facing: no stage names, no
-  // numbers, no descriptions anywhere in the UI logic.
+  // 17 clips — names are shown as a single minimal label, never numbered.
   var CLIPS = [
-    { file: '01-foundation.mp4',     poster: '01-foundation.jpg' },
-    { file: '02-framing.mp4',        poster: '02-framing.jpg' },
-    { file: '03-windows-doors.mp4',  poster: '03-windows-doors.jpg' },
-    { file: '04-exterior.mp4',       poster: '04-exterior.jpg' },
-    { file: '05-roughins.mp4',       poster: '05-roughins.jpg' },
-    { file: '06-drywall.mp4',        poster: '06-drywall.jpg' },
-    { file: '07-flooring.mp4',       poster: '07-flooring.jpg' },
-    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg' },
-    { file: '09-kitchen.mp4',        poster: '09-kitchen.jpg' },
-    { file: '10-bathroom.mp4',       poster: '10-bathroom.jpg' },
-    { file: '11-backyard.mp4',       poster: '11-backyard.jpg' },
-    { file: '12-entry.mp4',          poster: '12-entry.jpg' },
-    { file: '13-living.mp4',         poster: '13-living.jpg' },
-    { file: '14-kitchen.mp4',        poster: '14-kitchen.jpg' },
-    { file: '15-dining.mp4',         poster: '15-dining.jpg' },
-    { file: '16-bedroom.mp4',        poster: '16-bedroom.jpg' },
-    { file: '17-bathroom.mp4',       poster: '17-bathroom.jpg' }
+    { file: '01-foundation.mp4',     poster: '01-foundation.jpg',     name: 'Foundation' },
+    { file: '02-framing.mp4',        poster: '02-framing.jpg',        name: 'Framing' },
+    { file: '03-windows-doors.mp4',  poster: '03-windows-doors.jpg',  name: 'Windows & Doors' },
+    { file: '04-exterior.mp4',       poster: '04-exterior.jpg',       name: 'Exterior' },
+    { file: '05-roughins.mp4',       poster: '05-roughins.jpg',       name: 'Rough-Ins' },
+    { file: '06-drywall.mp4',        poster: '06-drywall.jpg',        name: 'Drywall' },
+    { file: '07-flooring.mp4',       poster: '07-flooring.jpg',       name: 'Flooring' },
+    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg', name: 'Interior Doors' },
+    { file: '09-kitchen.mp4',        poster: '09-kitchen.jpg',        name: 'Kitchen' },
+    { file: '10-bathroom.mp4',       poster: '10-bathroom.jpg',       name: 'Bathroom' },
+    { file: '11-backyard.mp4',       poster: '11-backyard.jpg',       name: 'Backyard' },
+    { file: '12-entry.mp4',          poster: '12-entry.jpg',          name: 'Entry' },
+    { file: '13-living.mp4',         poster: '13-living.jpg',         name: 'Living Room' },
+    { file: '14-kitchen.mp4',        poster: '14-kitchen.jpg',        name: 'Kitchen' },
+    { file: '15-dining.mp4',         poster: '15-dining.jpg',         name: 'Dining Room' },
+    { file: '16-bedroom.mp4',        poster: '16-bedroom.jpg',        name: 'Bedroom' },
+    { file: '17-bathroom.mp4',       poster: '17-bathroom.jpg',       name: 'Bathroom' }
   ];
   var BUILD_N = 11;                  // chapter 1: clips 0..10
   var WALK_N = CLIPS.length - BUILD_N; // chapter 2: clips 11..16
@@ -67,6 +66,8 @@
   var walkFrames = document.getElementById('framesWalk');
   var bar = document.getElementById('filmProgress');
   var barFill = document.getElementById('filmProgressFill');
+  var nameEl = document.getElementById('filmName');
+  var lastName = '';
 
   var videos = [];   // HTMLVideoElement per clip (src set lazily), global index 0..16
   var currentClip = -1;
@@ -195,12 +196,19 @@
     // one continuous progress bar across both chapters
     var g = (p1 * BUILD_N + p2 * WALK_N) / CLIPS.length;
     if (barFill) barFill.style.width = (g * 100).toFixed(2) + '%';
+    // current stage/room name — minimal label, never numbered
+    var nm = CLIPS[a] ? CLIPS[a].name : '';
+    if (nm !== lastName) {
+      lastName = nm;
+      if (nameEl) nameEl.textContent = nm;
+    }
     if (bar) {
       var y = window.scrollY;
       var vh = window.innerHeight;
       var on = y > buildSec.offsetTop - vh &&
                y < walkSec.offsetTop + walkSec.offsetHeight;
       bar.classList.toggle('on', on);
+      if (nameEl) nameEl.classList.toggle('on', on);
     }
   }
 
@@ -266,6 +274,10 @@
       }
       if (barFill) barFill.style.width = '100%';
       if (bar) bar.classList.add('on');
+      if (nameEl) {
+        nameEl.textContent = CLIPS[CLIPS.length - 1].name;
+        nameEl.classList.add('on');
+      }
       return;
     }
     if (!buildSec || !walkSec || !buildFrames || !walkFrames) return;

@@ -45,6 +45,14 @@
 .film-progress .fill{display:block;height:100%;width:0;
   background:linear-gradient(90deg,var(--teal),var(--copper))}
 
+/* ---------- current stage/room name — minimal, never numbered ---------- */
+.film-name{position:fixed;left:clamp(1.2rem,4vw,3rem);bottom:1.5rem;z-index:60;
+  pointer-events:none;opacity:0;transition:opacity .3s ease;
+  font-family:var(--font-display);font-weight:700;
+  font-size:clamp(1.15rem,2.6vw,1.7rem);letter-spacing:.05em;
+  color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.7)}
+.film-name.on{opacity:1}
+
 /* ---------- stat band (static values — no scroll animation) ---------- */
 .stat-band{position:relative;padding:7rem 0;background:
   radial-gradient(46% 60% at 12% 20%,rgba(0,229,204,.07),transparent 70%),
