@@ -1,12 +1,18 @@
-/* ============ Renofy scroll-effects experiment v6 ============
-   SCROLL-DRIVEN VIDEO. All footage is original AI-generated photorealistic
-   content produced for this experiment — no third-party video, no autoplay,
-   no background playback: each clip stays paused and only its currentTime is
-   scrubbed by scroll position. Pinned sticky section; opacity crossfades
-   between clips so the whole pin reads as one continuous build.
-   SINGLE-ANCHOR METHOD: one master image per zone (finished exterior,
-   great room, kitchen, bathroom); every construction stage derived backward
-   from its anchor so all 11 stages are unmistakably the SAME house.
+/* ============ Renofy scroll film v7 ============
+   TWO-PINNED-CHAPTER SCROLL-DRIVEN VIDEO.
+   Chapter 1 — BUILD (~550vh pin, 11 clips): foundation → finished exterior.
+   Chapter 2 — WALKTHROUGH (~300vh pin, 6 clips): step inside the same house.
+   All footage is original AI-generated photorealistic content produced for
+   this experiment — no third-party video, no autoplay, no background
+   playback: each clip stays paused and only its currentTime is scrubbed by
+   scroll position. Pinned sticky sections; opacity crossfades between clips.
+   SINGLE-ANCHOR METHOD: one master image per zone (finished exterior, great
+   room, kitchen, bathroom, entry, dining, bedroom); every construction
+   stage derived backward from its anchor so all 17 clips show unmistakably
+   the SAME house (see assets/scroll/SOURCES.md).
+   MINIMAL UI: no stage names, no numbers, no cards, no descriptions, no
+   text over the film — only one thin teal→copper progress bar, continuous
+   across both chapters.
    2. Scroll-driven stat counters (speedometer-style)
    3. Subtle hero parallax (3 depth layers)
    4. Blur-to-sharp image reveals
@@ -16,106 +22,90 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var rafQueued = false;
-  var lastP = -1;
+  var lastKey = '';
 
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function smooth(t) { t = clamp01(t); return t * t * (3 - 2 * t); }
 
-  /* ================= 1. SCROLL-DRIVEN BUILD FILM ================= */
-  // 11 stages, one original AI-generated photorealistic clip each, derived
-  // backward from single zone anchors (see assets/scroll/SOURCES.md) so the
-  // same house evolves continuously: stages 1-4 share one exterior anchor,
-  // 5-8 one great-room anchor, 9 the kitchen anchor, 10 the bathroom anchor,
-  // 11 the anchor house at dusk.
-  var STAGES = [
-    'Foundation|Excavation, footings and foundation walls — where every Renofy home begins.',
-    'Framing|The full wood-frame skeleton of a two-storey detached home rises.',
-    'Windows & Doors|Every opening filled — the envelope takes shape.',
-    'Exterior Finish|Siding, brick accents and a complete roof. Modern luxury curb appeal.',
-    'Interior Rough-ins|Inside the studs: electrical, plumbing and HVAC run with precision.',
-    'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.',
-    'Flooring|Wide-plank hardwood flows across the main floor.',
-    'Interior Doors|Doors hung with crisp trim and casing throughout.',
-    'Kitchen Installation|Dark cabinetry, a quartz waterfall island and copper pendants come together.',
-    'Bathroom Installations|Spa-grade stone bathrooms — tub, shower and vanities set in place.',
-    'Backyard Reveal|Landscaping, stone patio and evening light — the finished home, revealed.'
-  ];
-  // first/last = stage indices this clip covers (1:1 here). All footage is
-  // original AI-generated content for this experiment — see SOURCES.md.
+  /* ================= 1. SCROLL-DRIVEN FILM (two chapters) ================= */
+  // 17 clips — file names only. Nothing user-facing: no stage names, no
+  // numbers, no descriptions anywhere in the UI logic.
   var CLIPS = [
-    { file: '01-foundation.mp4',   poster: '01-foundation.jpg',   first: 0, last: 0 },
-    { file: '02-framing.mp4',      poster: '02-framing.jpg',      first: 1, last: 1 },
-    { file: '03-windows-doors.mp4', poster: '03-windows-doors.jpg', first: 2, last: 2 },
-    { file: '04-exterior.mp4',     poster: '04-exterior.jpg',     first: 3, last: 3 },
-    { file: '05-roughins.mp4',     poster: '05-roughins.jpg',     first: 4, last: 4 },
-    { file: '06-drywall.mp4',      poster: '06-drywall.jpg',      first: 5, last: 5 },
-    { file: '07-flooring.mp4',     poster: '07-flooring.jpg',     first: 6, last: 6 },
-    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg', first: 7, last: 7 },
-    { file: '09-kitchen.mp4',     poster: '09-kitchen.jpg',     first: 8, last: 8 },
-    { file: '10-bathroom.mp4',     poster: '10-bathroom.jpg',     first: 9, last: 9 },
-    { file: '11-backyard.mp4',     poster: '11-backyard.jpg',     first: 10, last: 10 }
+    { file: '01-foundation.mp4',     poster: '01-foundation.jpg' },
+    { file: '02-framing.mp4',        poster: '02-framing.jpg' },
+    { file: '03-windows-doors.mp4',  poster: '03-windows-doors.jpg' },
+    { file: '04-exterior.mp4',       poster: '04-exterior.jpg' },
+    { file: '05-roughins.mp4',       poster: '05-roughins.jpg' },
+    { file: '06-drywall.mp4',        poster: '06-drywall.jpg' },
+    { file: '07-flooring.mp4',       poster: '07-flooring.jpg' },
+    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg' },
+    { file: '09-kitchen.mp4',        poster: '09-kitchen.jpg' },
+    { file: '10-bathroom.mp4',       poster: '10-bathroom.jpg' },
+    { file: '11-backyard.mp4',       poster: '11-backyard.jpg' },
+    { file: '12-entry.mp4',          poster: '12-entry.jpg' },
+    { file: '13-living.mp4',         poster: '13-living.jpg' },
+    { file: '14-kitchen.mp4',        poster: '14-kitchen.jpg' },
+    { file: '15-dining.mp4',         poster: '15-dining.jpg' },
+    { file: '16-bedroom.mp4',        poster: '16-bedroom.jpg' },
+    { file: '17-bathroom.mp4',       poster: '17-bathroom.jpg' }
   ];
+  var BUILD_N = 11;                  // chapter 1: clips 0..10
+  var WALK_N = CLIPS.length - BUILD_N; // chapter 2: clips 11..16
   var CLIP_DIR = 'assets/scroll/clips/';
-  var NCLIP = CLIPS.length;
-  var NSTAGE = STAGES.length;
-  var FADE_P = 0.05; // crossfade width in pin-progress units (~half a stage)
+  var FADE = 0.05; // crossfade width in chapter-progress units
 
-  var fbSection = document.getElementById('renovation-flipbook');
-  var fbFrames = document.getElementById('fbFrames');
-  var fbNum = document.getElementById('fbNum');
-  var fbBar = document.getElementById('fbBar');
-  var fbStageNum = document.getElementById('fbStageNum');
-  var fbStageName = document.getElementById('fbStageName');
-  var fbStageDesc = document.getElementById('fbStageDesc');
+  var buildSec = document.getElementById('film-build');
+  var walkSec = document.getElementById('film-walk');
+  var buildFrames = document.getElementById('framesBuild');
+  var walkFrames = document.getElementById('framesWalk');
+  var bar = document.getElementById('filmProgress');
+  var barFill = document.getElementById('filmProgressFill');
 
-  var videos = [];   // HTMLVideoElement per clip (src set lazily)
-  var currentStage = -1;
-
-  function clipForStage(s) {
-    for (var c = 0; c < NCLIP; c++) {
-      if (s >= CLIPS[c].first && s <= CLIPS[c].last) return c;
-    }
-    return NCLIP - 1;
-  }
+  var videos = [];   // HTMLVideoElement per clip (src set lazily), global index 0..16
+  var currentClip = -1;
 
   function buildVideos() {
-    for (var i = 0; i < NCLIP; i++) {
-      (function (idx) {
-        var v = document.createElement('video');
-        v.muted = true;
-        v.setAttribute('muted', '');
-        v.setAttribute('playsinline', '');
-        v.setAttribute('webkit-playsinline', '');
-        v.preload = 'metadata';
-        v.disablePictureInPicture = true;
-        v.setAttribute('disablepictureinpicture', '');
-        v.setAttribute('aria-hidden', 'true');
-        v.tabIndex = -1;
-        v.poster = CLIP_DIR + CLIPS[idx].poster;
-        v.style.opacity = '0';
-        v.dataset.src = CLIP_DIR + CLIPS[idx].file;
-        // never play on its own — this film moves only with scroll
-        v.addEventListener('play', function () { v.pause(); });
-        fbFrames.appendChild(v);
-        videos[idx] = v;
-      })(i);
-    }
+    var chapters = [
+      { el: buildFrames, base: 0, n: BUILD_N },
+      { el: walkFrames, base: BUILD_N, n: WALK_N }
+    ];
+    chapters.forEach(function (ch) {
+      for (var i = 0; i < ch.n; i++) {
+        (function (idx) {
+          var v = document.createElement('video');
+          v.muted = true;
+          v.setAttribute('muted', '');
+          v.setAttribute('playsinline', '');
+          v.setAttribute('webkit-playsinline', '');
+          v.preload = 'metadata';
+          v.disablePictureInPicture = true;
+          v.setAttribute('disablepictureinpicture', '');
+          v.setAttribute('aria-hidden', 'true');
+          v.tabIndex = -1;
+          v.poster = CLIP_DIR + CLIPS[idx].poster;
+          v.dataset.src = CLIP_DIR + CLIPS[idx].file;
+          // never play on its own — this film moves only with scroll
+          v.addEventListener('play', function () { v.pause(); });
+          ch.el.appendChild(v);
+          videos[idx] = v;
+        })(ch.base + i);
+      }
+    });
   }
 
   // progressive loading: only the active clip and its neighbours hold data
   function ensureSrc(i) {
-    if (i < 0 || i >= NCLIP) return;
+    if (i < 0 || i >= CLIPS.length) return;
     var v = videos[i];
-    if (!v.getAttribute('src')) {
+    if (v && !v.getAttribute('src')) {
       v.src = v.dataset.src;
       v.preload = 'auto';
       v.load();
     }
   }
   function releaseFarClips(a) {
-    for (var i = 0; i < NCLIP; i++) {
-      if (Math.abs(i - a) > 1 && videos[i].getAttribute('src')) {
+    for (var i = 0; i < CLIPS.length; i++) {
+      if (Math.abs(i - a) > 1 && videos[i] && videos[i].getAttribute('src')) {
         videos[i].removeAttribute('src');
         videos[i].preload = 'metadata';
         videos[i].load();
@@ -123,32 +113,20 @@
     }
   }
 
-  function setStage(s) {
-    if (s === currentStage) return;
-    currentStage = s;
-    var parts = STAGES[s].split('|');
-    if (fbNum) fbNum.textContent = pad2(s + 1);
-    if (fbStageNum) fbStageNum.textContent = (s + 1);
-    if (fbStageName) {
-      fbStageName.style.opacity = 0;
-      window.setTimeout(function () {
-        fbStageName.textContent = parts[0];
-        fbStageName.style.opacity = 1;
-      }, 120);
-    }
-    if (fbStageDesc) fbStageDesc.textContent = parts[1];
-    var c = clipForStage(s);
-    ensureSrc(c - 1);
-    ensureSrc(c);
-    ensureSrc(c + 1);
-    releaseFarClips(c);
+  function setActive(a) {
+    if (a === currentClip) return;
+    currentClip = a;
+    ensureSrc(a - 1);
+    ensureSrc(a);
+    ensureSrc(a + 1);
+    releaseFarClips(a);
   }
 
-  function progress() {
-    if (!fbSection) return 0;
+  function chapterProgress(sec) {
+    if (!sec) return 0;
     var vh = window.innerHeight;
-    var top = fbSection.offsetTop;
-    var scrollable = fbSection.offsetHeight - vh;
+    var top = sec.offsetTop;
+    var scrollable = sec.offsetHeight - vh;
     return scrollable > 0 ? clamp01((window.scrollY - top) / scrollable) : 0;
   }
 
@@ -161,31 +139,24 @@
   }
 
   // Opacity comes purely from each clip's scroll window. Windows overlap by
-  // FADE_P centred on each boundary, so one clip ramps out while the next
+  // FADE centred on each boundary, so one clip ramps out while the next
   // ramps in — a true crossfade with no state machine and no pops.
-  function updateFilm() {
-    if (!fbSection || !fbFrames) return;
-    var p = progress();
-    if (p === lastP) return;
-    lastP = p;
-
-    var s = Math.min(NSTAGE - 1, Math.floor(p * NSTAGE));
-    setStage(s);
-
-    for (var c = 0; c < NCLIP; c++) {
-      var v = videos[c];
-      var start = CLIPS[c].first / NSTAGE;
-      var end = (CLIPS[c].last + 1) / NSTAGE;
-      var half = FADE_P / 2;
-      var wStart = (c === 0) ? start : start - half;
-      var wEnd = (c === NCLIP - 1) ? end : end + half;
+  function updateChapter(p, base, n) {
+    for (var i = 0; i < n; i++) {
+      var v = videos[base + i];
+      if (!v) continue;
+      var start = i / n;
+      var end = (i + 1) / n;
+      var half = FADE / 2;
+      var wStart = (i === 0) ? start : start - half;
+      var wEnd = (i === n - 1) ? end : end + half;
       var op = 0;
       if (p >= wStart && p <= wEnd) {
         op = 1;
         // fade in across the overlap with the previous clip (not on clip 0)
-        if (c > 0 && p < start + half) op = smooth((p - wStart) / FADE_P);
+        if (i > 0 && p < start + half) op = smooth((p - wStart) / FADE);
         // fade out across the overlap with the next clip (not on last clip)
-        else if (c < NCLIP - 1 && p > end - half) op = 1 - smooth((p - (end - half)) / FADE_P);
+        else if (i < n - 1 && p > end - half) op = 1 - smooth((p - (end - half)) / FADE);
       }
       v.style.opacity = op.toFixed(3);
       // scrub every clip that holds data and could be visible; the poster
@@ -194,8 +165,36 @@
         scrubTo(v, clamp01((p - start) / (end - start)) * v.duration);
       }
     }
+  }
 
-    if (fbBar) fbBar.style.width = (4 + p * 96).toFixed(1) + '%';
+  function updateFilm() {
+    if (!buildSec || !walkSec) return;
+    var p1 = chapterProgress(buildSec);
+    var p2 = chapterProgress(walkSec);
+    var key = p1.toFixed(4) + '|' + p2.toFixed(4);
+    if (key === lastKey) return;
+    lastKey = key;
+
+    updateChapter(p1, 0, BUILD_N);
+    updateChapter(p2, BUILD_N, WALK_N);
+
+    // the walkthrough owns the viewport once its section starts
+    var inWalk = (window.scrollY + window.innerHeight / 2) >= walkSec.offsetTop;
+    var a = inWalk
+      ? BUILD_N + Math.min(WALK_N - 1, Math.floor(p2 * WALK_N))
+      : Math.min(BUILD_N - 1, Math.floor(p1 * BUILD_N));
+    setActive(a);
+
+    // one continuous progress bar across both chapters
+    var g = (p1 * BUILD_N + p2 * WALK_N) / CLIPS.length;
+    if (barFill) barFill.style.width = (g * 100).toFixed(2) + '%';
+    if (bar) {
+      var y = window.scrollY;
+      var vh = window.innerHeight;
+      var on = y > buildSec.offsetTop - vh &&
+               y < walkSec.offsetTop + walkSec.offsetHeight;
+      bar.classList.toggle('on', on);
+    }
   }
 
   /* ================= 2. SCROLL-DRIVEN COUNTERS ================= */
@@ -267,16 +266,17 @@
   function init() {
     initBlurSharp();
     if (reduceMotion) {
-      // static: the dusk frame, no scrubbing
-      if (fbFrames) {
+      // static: the final finished room, full-bleed, no scrubbing
+      if (walkFrames) {
         var img = document.createElement('img');
-        img.src = CLIP_DIR + CLIPS[NCLIP - 1].poster;
-        img.alt = 'Renofy home mid-build — drywalled interior';
-        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
-        fbFrames.appendChild(img);
+        img.src = CLIP_DIR + CLIPS[CLIPS.length - 1].poster;
+        img.alt = '';
+        img.setAttribute('aria-hidden', 'true');
+        img.style.cssText = 'position:absolute;inset:0;width:100vw;height:100%;max-width:none;object-fit:cover;display:block;margin:0;padding:0';
+        walkFrames.appendChild(img);
       }
-      setStage(NSTAGE - 1);
-      if (fbBar) fbBar.style.width = '100%';
+      if (barFill) barFill.style.width = '100%';
+      if (bar) bar.classList.add('on');
       counters.forEach(function (el) {
         var target = parseFloat(el.getAttribute('data-count'));
         var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
@@ -284,10 +284,10 @@
       });
       return;
     }
-    if (!fbSection || !fbFrames) return;
+    if (!buildSec || !walkSec || !buildFrames || !walkFrames) return;
     buildVideos();
-    setStage(0);
-    lastP = -1;
+    setActive(0);
+    lastKey = '';
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
     onScroll();

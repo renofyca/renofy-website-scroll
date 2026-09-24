@@ -1,38 +1,35 @@
-/* ============ Renofy scroll-effects experiment ============
-   Pinned flipbook · scroll-driven counters · hero parallax · blur-to-sharp
-   Dark-only liquid-glass language, matching the live site. No light mode. */
+/* ============ Renofy scroll film v7 ============
+   Two pinned chapters, full-bleed, minimal UI.
+   Chapter 1 (build):    ~550vh pin, 11 clips.
+   Chapter 2 (walkthrough): ~300vh pin, 6 clips.
+   The pinned video fills the viewport edge to edge — no black bars,
+   no pillarboxing, no letterboxing: video is 100vw x 100% with
+   object-fit:cover, no max-width, and zero padding/margin on the pinned
+   section and every wrapper. The only overlay is one thin fixed
+   teal→copper progress bar, continuous across both chapters.
+   Dark-only. No light mode. */
 
 :root{
   --fb-ease:cubic-bezier(.22,.9,.28,1);
 }
 
-/* ---------- pinned renovation flipbook ---------- */
-.flipbook{position:relative;height:550vh;background:#060607;z-index:1}
-.fb-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-.fb-frames{position:absolute;inset:0;background:#060607}
-.fb-frames video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+/* ---------- full-bleed pinned film chapters ---------- */
+.film-chapter{position:relative;margin:0;padding:0;border:0;background:#060607;z-index:1}
+.film-chapter.build{height:550vh}
+.film-chapter.walk{height:300vh}
+.film-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;margin:0;padding:0;border:0}
+.film-frames{position:absolute;inset:0;margin:0;padding:0;border:0;background:#060607}
+.film-frames video{position:absolute;inset:0;width:100vw;height:100%;max-width:none;
+  object-fit:cover;display:block;margin:0;padding:0;border:0;
   opacity:0;will-change:opacity;background:#060607}
-.fb-frames video:first-child{opacity:1}
-.fb-vignette{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(6,6,7,.72) 0%,transparent 26%,transparent 62%,rgba(6,6,7,.82) 100%)}
-.fb-ui{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;
-  padding:calc(var(--header-h) + 1.2rem) 0 2.2rem;pointer-events:none}
-.fb-top{display:flex;align-items:center;justify-content:space-between}
-.fb-count{font-family:var(--font-display);font-size:1rem;letter-spacing:.22em;color:#cfd2da}
-.fb-count b{color:var(--teal);font-size:1.5rem;letter-spacing:.06em}
-.fb-bottom{pointer-events:auto;max-width:640px;
-  background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--glass-hi),0 24px 60px rgba(0,0,0,.45);
-  padding:1.4rem 1.6rem 1.5rem}
-.fb-stage-kicker{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--copper)}
-.fb-stage h2{font-size:clamp(2rem,5.4vw,3.4rem);margin:.35rem 0 .5rem;text-transform:uppercase;transition:opacity .25s ease}
-.fb-stage p{color:#c9ccd4;margin:0;max-width:52ch;min-height:3.2em}
-.fb-progress{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:1.1rem;overflow:hidden}
-.fb-bar{height:100%;width:10%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--copper));transition:width .12s linear}
-.fb-hint{display:flex;align-items:center;gap:.6rem;margin-top:1rem;color:#9aa0ab;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase}
-.fb-hint .wheel{width:22px;height:36px;border:2px solid #9aa0ab;border-radius:12px;position:relative;flex:none}
-.fb-hint .wheel::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:8px;margin-left:-2px;border-radius:4px;background:var(--teal);animation:fbwheel 1.6s ease-in-out infinite}
-@keyframes fbwheel{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(10px);opacity:.35}}
+
+/* ---------- one thin progress bar, continuous across both chapters ---------- */
+.film-progress{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:60;
+  pointer-events:none;background:rgba(255,255,255,.08);
+  opacity:0;transition:opacity .3s ease}
+.film-progress.on{opacity:1}
+.film-progress .fill{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--teal),var(--copper))}
 
 /* ---------- scroll-driven stat band ---------- */
 .stat-band{position:relative;padding:7rem 0;background:
@@ -57,10 +54,11 @@
 .b2s{filter:blur(14px) saturate(.92);transform:scale(1.03);transition:filter 1.1s var(--fb-ease),transform 1.1s var(--fb-ease)}
 .b2s.inview{filter:blur(0) saturate(1);transform:scale(1)}
 
-/* ---------- reduced motion: everything final, no scrubbing ---------- */
+/* ---------- reduced motion: single static final reveal, no scrubbing ---------- */
 @media(prefers-reduced-motion:reduce){
-  .flipbook{height:auto}
-  .fb-sticky{position:relative;height:88vh}
+  .film-chapter.build{display:none}
+  .film-chapter.walk{height:auto}
+  .film-pin{position:relative;height:88vh}
+  .film-progress{display:none}
   .b2s{filter:none;transform:none;transition:none}
-  .fb-hint .wheel::after{animation:none}
 }
