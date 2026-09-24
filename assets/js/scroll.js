@@ -22,8 +22,8 @@
   /* ================= 1. SCROLL-DRIVEN BUILD FILM ================= */
   // 6 stages, one original AI-generated photorealistic clip each, chained so
   // the same house evolves continuously. Stages 7-11 (flooring, interior
-  // doors, kitchen, bathrooms, backyard) are ungenerated — the video pipeline
-  // went down after stage 6; see assets/scroll/SOURCES.md for the resume
+  // Stages 9-11 (kitchen, bathrooms, backyard) are ungenerated — the video
+  // pipeline went down; see assets/scroll/SOURCES.md for the resume
   // snapshot so the chain can be continued exactly where it stopped.
   var STAGES = [
     'Foundation|Excavation, footings and foundation walls — where every Renofy home begins.',
@@ -31,7 +31,9 @@
     'Windows & Doors|Every opening filled — the envelope takes shape.',
     'Exterior Finish|Siding, brick accents and a complete roof. Modern luxury curb appeal.',
     'Interior Rough-ins|Inside the studs: electrical, plumbing and HVAC run with precision.',
-    'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.'
+    'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.',
+    'Flooring|Wide-plank hardwood flows across the main floor.',
+    'Interior Doors|Doors hung with crisp trim and casing throughout.'
   ];
   // first/last = stage indices this clip covers (1:1 here). All footage is
   // original AI-generated content for this experiment — see SOURCES.md.
@@ -41,7 +43,9 @@
     { file: '03-windows-doors.mp4', poster: '03-windows-doors.jpg', first: 2, last: 2 },
     { file: '04-exterior.mp4',     poster: '04-exterior.jpg',     first: 3, last: 3 },
     { file: '05-roughins.mp4',     poster: '05-roughins.jpg',     first: 4, last: 4 },
-    { file: '06-drywall.mp4',      poster: '06-drywall.jpg',      first: 5, last: 5 }
+    { file: '06-drywall.mp4',      poster: '06-drywall.jpg',      first: 5, last: 5 },
+    { file: '07-flooring.mp4',     poster: '07-flooring.jpg',     first: 6, last: 6 },
+    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg', first: 7, last: 7 }
   ];
   var CLIP_DIR = 'assets/scroll/clips/';
   var NCLIP = CLIPS.length;
