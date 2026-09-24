@@ -1,8 +1,9 @@
-/* ============ Renofy scroll-effects experiment v3 ============
-   SCROLL-DRIVEN VIDEO. Real construction footage — no autoplay, no background
-   playback: each clip stays paused and only its currentTime is scrubbed by
-   scroll position. Pinned sticky section; opacity crossfades between clips so
-   the whole pin reads as one continuous real build.
+/* ============ Renofy scroll-effects experiment v4 ============
+   SCROLL-DRIVEN VIDEO. All footage is original AI-generated photorealistic
+   content produced for this experiment — no third-party video, no autoplay,
+   no background playback: each clip stays paused and only its currentTime is
+   scrubbed by scroll position. Pinned sticky section; opacity crossfades
+   between clips so the whole pin reads as one continuous build.
    2. Scroll-driven stat counters (speedometer-style)
    3. Subtle hero parallax (3 depth layers)
    4. Blur-to-sharp image reveals
@@ -19,30 +20,28 @@
   function smooth(t) { t = clamp01(t); return t * t * (3 - 2 * t); }
 
   /* ================= 1. SCROLL-DRIVEN BUILD FILM ================= */
-  // 11 stages mapped onto 5 real-footage clips.
-  // Stages 5-6 (rough-ins/drywall), 9 (kitchen) and 10 (bathroom) are waiting
-  // on dedicated trade footage — see assets/scroll/SOURCES.md.
+  // 6 stages, one original AI-generated photorealistic clip each, chained so
+  // the same house evolves continuously. Stages 7-11 (flooring, interior
+  // doors, kitchen, bathrooms, backyard) are ungenerated — the video pipeline
+  // went down after stage 6; see assets/scroll/SOURCES.md for the resume
+  // snapshot so the chain can be continued exactly where it stopped.
   var STAGES = [
     'Foundation|Excavation, footings and foundation walls — where every Renofy home begins.',
     'Framing|The full wood-frame skeleton of a two-storey detached home rises.',
     'Windows & Doors|Every opening filled — the envelope takes shape.',
     'Exterior Finish|Siding, brick accents and a complete roof. Modern luxury curb appeal.',
     'Interior Rough-ins|Inside the studs: electrical, plumbing and HVAC run with precision.',
-    'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.',
-    'Flooring|Wide-plank hardwood flows across the main floor.',
-    'Interior Doors|Doors hung with crisp trim and casing throughout.',
-    'Kitchen Installation|Dark charcoal cabinetry, quartz waterfall island, full-height quartz backsplash — never tile.',
-    'Bathroom Installations|Spa-grade baths in stone, finished to the same standard.',
-    'Backyard Reveal|The finished backyard — stone patio, landscaping, home at dusk.'
+    'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.'
   ];
-  // first/last = stage indices this clip covers. All footage: Mixkit Free
-  // License (commercial use, no attribution required) — see SOURCES.md.
+  // first/last = stage indices this clip covers (1:1 here). All footage is
+  // original AI-generated content for this experiment — see SOURCES.md.
   var CLIPS = [
-    { file: '01-framing.mp4',   poster: '01-framing.jpg',   first: 0, last: 1  },
-    { file: '02-glazing.mp4',   poster: '02-glazing.jpg',   first: 2, last: 3  },
-    { file: '03-flooring.mp4',  poster: '03-flooring.jpg',  first: 4, last: 6  },
-    { file: '04-millwork.mp4',  poster: '04-millwork.jpg',  first: 7, last: 8  },
-    { file: '05-dusk.mp4',      poster: '05-dusk.jpg',      first: 9, last: 10 }
+    { file: '01-foundation.mp4',   poster: '01-foundation.jpg',   first: 0, last: 0 },
+    { file: '02-framing.mp4',      poster: '02-framing.jpg',      first: 1, last: 1 },
+    { file: '03-windows-doors.mp4', poster: '03-windows-doors.jpg', first: 2, last: 2 },
+    { file: '04-exterior.mp4',     poster: '04-exterior.jpg',     first: 3, last: 3 },
+    { file: '05-roughins.mp4',     poster: '05-roughins.jpg',     first: 4, last: 4 },
+    { file: '06-drywall.mp4',      poster: '06-drywall.jpg',      first: 5, last: 5 }
   ];
   var CLIP_DIR = 'assets/scroll/clips/';
   var NCLIP = CLIPS.length;
@@ -259,7 +258,7 @@
       if (fbFrames) {
         var img = document.createElement('img');
         img.src = CLIP_DIR + CLIPS[NCLIP - 1].poster;
-        img.alt = 'Finished Renofy home at dusk';
+        img.alt = 'Renofy home mid-build — drywalled interior';
         img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
         fbFrames.appendChild(img);
       }
