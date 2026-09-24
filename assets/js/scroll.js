@@ -18,11 +18,11 @@
    FULL SCREEN: pinned video is 100vw x 100dvh, object-fit:cover —
    edge-to-edge on desktop and phone, zero black bars. The transparent
    fixed site header renders over the film; nothing shrinks the video area.
-   STATS ARE STATIC: the "by the numbers" strip renders plain text values;
-   the old scroll-driven speedometer counters were removed (they showed
-   shifting/nonsense mid-scroll values).
+   STATS COUNT UP: the "by the numbers" strip animates 0 → final value once
+   when it scrolls into view (ease-out, lands exactly on the final number).
    3. Subtle hero parallax (3 depth layers)
    4. Blur-to-sharp image reveals
+   5. Stat count-up animation
    Dark-only. Native scroll, no hijacking. */
 (function () {
   'use strict';
@@ -246,6 +246,41 @@
     imgs.forEach(function (img) { io.observe(img); });
   }
 
+  /* ================= 5. STAT COUNT-UP (once, ease-out, exact final) ================= */
+  function initStatCount() {
+    var nums = document.querySelectorAll('.stat-num');
+    if (!nums.length || reduceMotion || !('IntersectionObserver' in window)) return;
+    var items = [];
+    nums.forEach(function (el) {
+      var m = el.textContent.trim().match(/^([\d.]+)(.*)$/);
+      if (!m) return;
+      var dec = (m[1].split('.')[1] || '').length;
+      var it = { el: el, val: parseFloat(m[1]), dec: dec, suffix: m[2] || '' };
+      it.el.textContent = (0).toFixed(dec) + it.suffix;
+      items.push(it);
+    });
+    if (!items.length) return;
+    var started = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting || started) return;
+        started = true;
+        io.disconnect();
+        var DUR = 1600;
+        var t0 = performance.now();
+        (function tick(now) {
+          var t = Math.min((now - t0) / DUR, 1);
+          var ez = 1 - Math.pow(1 - t, 3);
+          items.forEach(function (p) {
+            p.el.textContent = (t >= 1 ? p.val : p.val * ez).toFixed(p.dec) + p.suffix;
+          });
+          if (t < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: 0.4 });
+    io.observe(nums[0].closest('.stats-grid') || nums[0]);
+  }
+
   /* ================= main loop ================= */
   // Plain rAF-throttled scroll handling. (requestVideoFrameCallback was tried
   // and dropped: it does not fire reliably for paused videos, which stalled
@@ -262,6 +297,7 @@
 
   function init() {
     initBlurSharp();
+    initStatCount();
     if (reduceMotion) {
       // static: the final finished room, full-bleed, no scrubbing
       if (walkFrames) {
