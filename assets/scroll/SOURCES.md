@@ -54,8 +54,9 @@ leaves, and sheer curtains shift.
 
 Each clip is 1920×1080 H.264 (sources were 1152×768, upscaled with lanczos
 and center-cropped to 16:9), muted, `+faststart`, keyframes every 0.5s
-(`-g 12` at 24fps) for smooth scroll scrubbing, CRF 20–24, up to ~8–13MB
-each for the busiest construction clips. Posters are 1920×1080 jpgs.
+(`-g 12` at 24fps) for smooth scroll scrubbing. Sixteen clips are CRF 20 and
+one (05-roughins, the busiest construction clip) is CRF 22; file sizes run
+5.2–13.1MB, all 1920×1080, no audio, `+faststart`. Posters are 1920×1080 jpgs.
 
 | File | Chapter | Notes |
 |---|---|---|
