@@ -1,19 +1,26 @@
-/* ============ Renofy scroll film v7 ============
+/* ============ Renofy scroll film v8 ============
    TWO-PINNED-CHAPTER SCROLL-DRIVEN VIDEO.
-   Chapter 1 — BUILD (~550vh pin, 11 clips): foundation → finished exterior.
-   Chapter 2 — WALKTHROUGH (~300vh pin, 6 clips): step inside the same house.
+   Chapter 1 — BUILD (~550vh pin, 11 clips): the v6 luxury two-storey
+   (charcoal siding, brick accents, standing-seam metal roof), foundation →
+   finished exterior, upscaled to 1080p.
+   Chapter 2 — WALKTHROUGH (~300vh pin, 6 clips): step inside the same house —
+   entry → living → kitchen → dining → bedroom → bathroom.
    All footage is original AI-generated photorealistic content produced for
    this experiment — no third-party video, no autoplay, no background
    playback: each clip stays paused and only its currentTime is scrubbed by
    scroll position. Pinned sticky sections; opacity crossfades between clips.
-   SINGLE-ANCHOR METHOD: one master image per zone (finished exterior, great
-   room, kitchen, bathroom, entry, dining, bedroom); every construction
-   stage derived backward from its anchor so all 17 clips show unmistakably
-   the SAME house (see assets/scroll/SOURCES.md).
+   SINGLE-ANCHOR METHOD: one master image per zone; every construction
+   stage and walkthrough room derived from its anchor so all 17 clips show
+   unmistakably the SAME house (see assets/scroll/SOURCES.md).
    MINIMAL UI: no stage names, no numbers, no cards, no descriptions, no
    text over the film — only one thin teal→copper progress bar, continuous
    across both chapters.
-   2. Scroll-driven stat counters (speedometer-style)
+   FULL SCREEN: pinned video is 100vw x 100dvh, object-fit:cover —
+   edge-to-edge on desktop and phone, zero black bars. The transparent
+   fixed site header renders over the film; nothing shrinks the video area.
+   STATS ARE STATIC: the "by the numbers" strip renders plain text values;
+   the old scroll-driven speedometer counters were removed (they showed
+   shifting/nonsense mid-scroll values).
    3. Subtle hero parallax (3 depth layers)
    4. Blur-to-sharp image reveals
    Dark-only. Native scroll, no hijacking. */
@@ -197,23 +204,6 @@
     }
   }
 
-  /* ================= 2. SCROLL-DRIVEN COUNTERS ================= */
-  var counters = Array.prototype.slice.call(document.querySelectorAll('.stat-num[data-count]'));
-
-  function updateCounters() {
-    if (!counters.length) return;
-    var vh = window.innerHeight;
-    counters.forEach(function (el) {
-      var band = el.closest('.stat-band') || el;
-      var r = band.getBoundingClientRect();
-      var p = clamp01((vh - r.top) / (vh + r.height));
-      var target = parseFloat(el.getAttribute('data-count'));
-      var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
-      var suffix = el.getAttribute('data-suffix') || '';
-      el.textContent = (target * p).toFixed(decimals) + suffix;
-    });
-  }
-
   /* ================= 3. HERO PARALLAX (subtle, 3 layers) ================= */
   var hero = document.querySelector('.hero');
   var heroBg = document.querySelector('.hero-bg');
@@ -258,7 +248,6 @@
     window.requestAnimationFrame(function () {
       rafQueued = false;
       updateFilm();
-      updateCounters();
       updateParallax();
     });
   }
@@ -272,16 +261,11 @@
         img.src = CLIP_DIR + CLIPS[CLIPS.length - 1].poster;
         img.alt = '';
         img.setAttribute('aria-hidden', 'true');
-        img.style.cssText = 'position:absolute;inset:0;width:100vw;height:100%;max-width:none;object-fit:cover;display:block;margin:0;padding:0';
+        img.style.cssText = 'position:absolute;inset:0;width:100vw;height:100vh;height:100svh;height:100dvh;max-width:none;object-fit:cover;display:block;margin:0;padding:0';
         walkFrames.appendChild(img);
       }
       if (barFill) barFill.style.width = '100%';
       if (bar) bar.classList.add('on');
-      counters.forEach(function (el) {
-        var target = parseFloat(el.getAttribute('data-count'));
-        var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
-        el.textContent = target.toFixed(decimals) + (el.getAttribute('data-suffix') || '');
-      });
       return;
     }
     if (!buildSec || !walkSec || !buildFrames || !walkFrames) return;

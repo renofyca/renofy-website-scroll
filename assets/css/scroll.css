@@ -1,12 +1,17 @@
-/* ============ Renofy scroll film v7 ============
+/* ============ Renofy scroll film v8 ============
    Two pinned chapters, full-bleed, minimal UI.
-   Chapter 1 (build):    ~550vh pin, 11 clips.
-   Chapter 2 (walkthrough): ~300vh pin, 6 clips.
-   The pinned video fills the viewport edge to edge — no black bars,
-   no pillarboxing, no letterboxing: video is 100vw x 100% with
-   object-fit:cover, no max-width, and zero padding/margin on the pinned
-   section and every wrapper. The only overlay is one thin fixed
-   teal→copper progress bar, continuous across both chapters.
+   Chapter 1 (build):    ~550vh pin, 11 clips — the v6 luxury two-storey
+                         (charcoal siding, brick accents, standing-seam roof).
+   Chapter 2 (walkthrough): ~300vh pin, 6 clips — step inside the same house.
+   FULL SCREEN: the pinned video fills the ENTIRE viewport edge to edge —
+   zero black bars, no pillarboxing, no letterboxing, on desktop and phone.
+   Pin height targets 100dvh (the real viewport on iOS Safari, where 100vh
+   includes the toolbar), with 100svh/100vh fallbacks. Video is 100vw x
+   100dvh with object-fit:cover, no max-width, and zero padding/margin on the
+   pinned section and every wrapper. The transparent fixed site header
+   renders OVER the film; no site chrome shrinks the video area.
+   The only overlay is one thin fixed teal→copper progress bar, continuous
+   across both chapters. Stats are static text — no scroll-driven counters.
    Dark-only. No light mode. */
 
 :root{
@@ -14,12 +19,21 @@
 }
 
 /* ---------- full-bleed pinned film chapters ---------- */
-.film-chapter{position:relative;margin:0;padding:0;border:0;background:#060607;z-index:1}
+/* Full-screen launch requirement: the pin is exactly the visual viewport.
+   100dvh is the real target on iOS Safari (100vh includes the toolbar);
+   100svh and 100vh are fallbacks. The video is 100vw x 100dvh,
+   object-fit:cover — edge-to-edge on desktop and phone, zero bars.
+   Zero padding/margin/max-width on the chapter, pin, and frames.
+   The transparent fixed site header renders OVER the film (z-index above);
+   header, toast, and back-to-top are fixed overlays that never shrink the
+   video area. body{overflow-x:hidden} (style.css) kills any horizontal
+   overflow from 100vw. */
+.film-chapter{position:relative;margin:0;padding:0;border:0;max-width:none;background:#060607;z-index:1}
 .film-chapter.build{height:550vh}
 .film-chapter.walk{height:300vh}
-.film-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;margin:0;padding:0;border:0}
-.film-frames{position:absolute;inset:0;margin:0;padding:0;border:0;background:#060607}
-.film-frames video{position:absolute;inset:0;width:100vw;height:100%;max-width:none;
+.film-pin{position:sticky;top:0;height:100vh;height:100svh;height:100dvh;overflow:hidden;margin:0;padding:0;border:0;max-width:none}
+.film-frames{position:absolute;inset:0;margin:0;padding:0;border:0;max-width:none;background:#060607}
+.film-frames video{position:absolute;inset:0;width:100vw;height:100vh;height:100svh;height:100dvh;max-width:none;
   object-fit:cover;display:block;margin:0;padding:0;border:0;
   opacity:0;will-change:opacity;background:#060607}
 
@@ -31,7 +45,7 @@
 .film-progress .fill{display:block;height:100%;width:0;
   background:linear-gradient(90deg,var(--teal),var(--copper))}
 
-/* ---------- scroll-driven stat band ---------- */
+/* ---------- stat band (static values — no scroll animation) ---------- */
 .stat-band{position:relative;padding:7rem 0;background:
   radial-gradient(46% 60% at 12% 20%,rgba(0,229,204,.07),transparent 70%),
   radial-gradient(42% 60% at 88% 80%,rgba(232,147,60,.07),transparent 70%),var(--bg2)}
