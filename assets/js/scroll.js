@@ -1,9 +1,12 @@
-/* ============ Renofy scroll-effects experiment v4 ============
+/* ============ Renofy scroll-effects experiment v6 ============
    SCROLL-DRIVEN VIDEO. All footage is original AI-generated photorealistic
    content produced for this experiment — no third-party video, no autoplay,
    no background playback: each clip stays paused and only its currentTime is
    scrubbed by scroll position. Pinned sticky section; opacity crossfades
    between clips so the whole pin reads as one continuous build.
+   SINGLE-ANCHOR METHOD: one master image per zone (finished exterior,
+   great room, kitchen, bathroom); every construction stage derived backward
+   from its anchor so all 11 stages are unmistakably the SAME house.
    2. Scroll-driven stat counters (speedometer-style)
    3. Subtle hero parallax (3 depth layers)
    4. Blur-to-sharp image reveals
@@ -20,11 +23,11 @@
   function smooth(t) { t = clamp01(t); return t * t * (3 - 2 * t); }
 
   /* ================= 1. SCROLL-DRIVEN BUILD FILM ================= */
-  // 6 stages, one original AI-generated photorealistic clip each, chained so
-  // the same house evolves continuously. Stages 7-11 (flooring, interior
-  // Stages 9-11 (kitchen, bathrooms, backyard) are ungenerated — the video
-  // pipeline went down; see assets/scroll/SOURCES.md for the resume
-  // snapshot so the chain can be continued exactly where it stopped.
+  // 11 stages, one original AI-generated photorealistic clip each, derived
+  // backward from single zone anchors (see assets/scroll/SOURCES.md) so the
+  // same house evolves continuously: stages 1-4 share one exterior anchor,
+  // 5-8 one great-room anchor, 9 the kitchen anchor, 10 the bathroom anchor,
+  // 11 the anchor house at dusk.
   var STAGES = [
     'Foundation|Excavation, footings and foundation walls — where every Renofy home begins.',
     'Framing|The full wood-frame skeleton of a two-storey detached home rises.',
@@ -33,7 +36,10 @@
     'Interior Rough-ins|Inside the studs: electrical, plumbing and HVAC run with precision.',
     'Drywall & Plaster|Walls go up — hung, taped, mudded and sanded perfectly smooth.',
     'Flooring|Wide-plank hardwood flows across the main floor.',
-    'Interior Doors|Doors hung with crisp trim and casing throughout.'
+    'Interior Doors|Doors hung with crisp trim and casing throughout.',
+    'Kitchen Installation|Dark cabinetry, a quartz waterfall island and copper pendants come together.',
+    'Bathroom Installations|Spa-grade stone bathrooms — tub, shower and vanities set in place.',
+    'Backyard Reveal|Landscaping, stone patio and evening light — the finished home, revealed.'
   ];
   // first/last = stage indices this clip covers (1:1 here). All footage is
   // original AI-generated content for this experiment — see SOURCES.md.
@@ -45,7 +51,10 @@
     { file: '05-roughins.mp4',     poster: '05-roughins.jpg',     first: 4, last: 4 },
     { file: '06-drywall.mp4',      poster: '06-drywall.jpg',      first: 5, last: 5 },
     { file: '07-flooring.mp4',     poster: '07-flooring.jpg',     first: 6, last: 6 },
-    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg', first: 7, last: 7 }
+    { file: '08-interior-doors.mp4', poster: '08-interior-doors.jpg', first: 7, last: 7 },
+    { file: '09-kitchen.mp4',     poster: '09-kitchen.jpg',     first: 8, last: 8 },
+    { file: '10-bathroom.mp4',     poster: '10-bathroom.jpg',     first: 9, last: 9 },
+    { file: '11-backyard.mp4',     poster: '11-backyard.jpg',     first: 10, last: 10 }
   ];
   var CLIP_DIR = 'assets/scroll/clips/';
   var NCLIP = CLIPS.length;
